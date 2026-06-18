@@ -243,7 +243,7 @@ const setupGallerySlider = () => {
 
     const delta = Math.min(now - lastFrame, 80);
     lastFrame = now;
-    position += delta * 0.095;
+    position += delta * 0.07;
 
     if (loopPoint && position >= loopPoint) {
       position -= loopPoint;
