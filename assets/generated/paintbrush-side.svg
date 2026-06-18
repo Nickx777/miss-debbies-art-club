@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 210" role="img" aria-label="Paintbrush with bright paint">
+  <defs>
+    <linearGradient id="handle" x1="210" y1="125" x2="740" y2="60" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#06458e"/>
+      <stop offset=".44" stop-color="#0b67d8"/>
+      <stop offset=".73" stop-color="#b36b29"/>
+      <stop offset="1" stop-color="#e0a357"/>
+    </linearGradient>
+    <linearGradient id="ferrule" x1="142" y1="122" x2="255" y2="91" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#9e9a8f"/>
+      <stop offset=".22" stop-color="#f7f2df"/>
+      <stop offset=".52" stop-color="#b8b0a1"/>
+      <stop offset=".76" stop-color="#fff7e4"/>
+      <stop offset="1" stop-color="#7c776d"/>
+    </linearGradient>
+    <linearGradient id="bristles" x1="22" y1="158" x2="169" y2="105" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#8a4b16"/>
+      <stop offset=".4" stop-color="#d6903a"/>
+      <stop offset="1" stop-color="#6f3b13"/>
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-30%" width="110%" height="160%">
+      <feDropShadow dx="7" dy="10" stdDeviation="5" flood-color="#25133d" flood-opacity=".18"/>
+    </filter>
+  </defs>
+  <g filter="url(#shadow)" transform="rotate(-8 380 105)">
+    <path d="M218 91 C350 73 505 49 713 22 C740 18 755 33 744 54 C715 111 463 144 223 130 Z" fill="url(#handle)"/>
+    <path d="M226 91 C349 77 505 51 710 25 C704 44 699 55 694 69 C503 95 346 122 222 128 Z" fill="#ffffff" opacity=".14"/>
+    <path d="M275 85 C340 78 439 59 518 49" fill="none" stroke="#f01772" stroke-width="8" stroke-linecap="round" opacity=".72"/>
+    <path d="M398 76 C448 65 493 58 557 49" fill="none" stroke="#ffd21e" stroke-width="7" stroke-linecap="round" opacity=".72"/>
+    <path d="M342 112 C405 102 486 91 574 76" fill="none" stroke="#57b51d" stroke-width="8" stroke-linecap="round" opacity=".62"/>
+    <path d="M574 73 l24 -8 l-20 20 l25 5 l-28 6 l-3 27 l-12 -24 l-27 6 l20 -19 l-19 -16 z" fill="#f01772" opacity=".8"/>
+    <path d="M146 91 C172 82 206 78 237 79 C250 87 256 119 246 137 C211 147 178 147 149 139 C133 124 130 105 146 91 Z" fill="url(#ferrule)"/>
+    <path d="M158 95 C183 91 211 89 235 88" fill="none" stroke="#ffffff" stroke-width="7" opacity=".56"/>
+    <path d="M169 136 C192 138 221 136 241 129" fill="none" stroke="#5c564d" stroke-width="4" opacity=".42"/>
+    <path d="M23 146 C47 112 97 88 151 94 C165 106 169 128 154 143 C104 178 48 178 23 146 Z" fill="url(#bristles)"/>
+    <path d="M22 147 C49 129 95 113 153 101" fill="none" stroke="#3d210c" stroke-width="3" opacity=".45"/>
+    <path d="M34 160 C70 147 105 130 159 115" fill="none" stroke="#3d210c" stroke-width="3" opacity=".36"/>
+    <path d="M16 151 C23 128 57 114 95 112 C109 116 122 127 132 139 C96 170 42 177 16 151 Z" fill="#f01772"/>
+    <path d="M43 166 C74 147 109 132 144 122 C129 149 91 174 43 166 Z" fill="#ff7a00" opacity=".9"/>
+    <path d="M20 145 C45 133 72 129 96 131" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity=".38"/>
+  </g>
+</svg>
