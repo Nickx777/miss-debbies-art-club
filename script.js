@@ -5,10 +5,13 @@ const galleryToggle = document.querySelector(".gallery-toggle");
 const gallery = document.querySelector(".gallery:not(.gallery-extra)");
 const galleryExtra = document.querySelector("#gallery-extra");
 const revealTargets = document.querySelectorAll(
-  ".section-heading, .feature, .qualification-list li, .gallery-item, .contact-card, .map-wrap, .flyer-frame"
+  ".section-heading, .feature, .qualification-list li, .teacher-copy, .teacher-strip, .venue-copy, .gallery-item, .contact-card, .map-wrap, .flyer-frame"
 );
+const scrollMotionTargets = document.querySelectorAll(".section-band, .classes, .gallery-section, .contact");
+const floatingDecorations = document.querySelectorAll(".asset-splatter, .paint-note, .hero-photo");
 let galleryAutoScrollId;
 let galleryWasDragged = false;
+let scrollFrameId;
 
 const revealElement = (element, index = 0) => {
   element.classList.add("reveal-in");
@@ -47,6 +50,38 @@ if ("IntersectionObserver" in window) {
 } else {
   revealTargets.forEach((element) => element.classList.add("is-visible"));
 }
+
+const updateScrollAnimations = () => {
+  scrollFrameId = undefined;
+  const viewportHeight = window.innerHeight || 1;
+
+  scrollMotionTargets.forEach((element) => {
+    const rect = element.getBoundingClientRect();
+    const progress = Math.min(1, Math.max(0, 1 - rect.top / viewportHeight));
+    const centered = Math.min(1, Math.max(0, (viewportHeight - Math.abs(rect.top + rect.height / 2 - viewportHeight / 2)) / viewportHeight));
+    element.style.setProperty("--scroll-progress", progress.toFixed(3));
+    element.style.setProperty("--scroll-center", centered.toFixed(3));
+    element.classList.toggle("is-scroll-active", rect.top < viewportHeight * 0.86 && rect.bottom > viewportHeight * 0.12);
+  });
+
+  floatingDecorations.forEach((element, index) => {
+    const rect = element.getBoundingClientRect();
+    const drift = Math.max(-1, Math.min(1, (viewportHeight / 2 - (rect.top + rect.height / 2)) / viewportHeight));
+    element.style.setProperty("--float-drift", (drift * (index % 2 ? -1 : 1)).toFixed(3));
+  });
+};
+
+const scheduleScrollAnimations = () => {
+  if (scrollFrameId) {
+    return;
+  }
+
+  scrollFrameId = window.requestAnimationFrame(updateScrollAnimations);
+};
+
+updateScrollAnimations();
+window.addEventListener("scroll", scheduleScrollAnimations, { passive: true });
+window.addEventListener("resize", scheduleScrollAnimations, { passive: true });
 
 document.addEventListener("click", (event) => {
   const button = event.target.closest(".gallery-item, .poster-trigger");
@@ -266,3 +301,4 @@ lightbox?.addEventListener("click", (event) => {
     lightbox.close();
   }
 });
+
