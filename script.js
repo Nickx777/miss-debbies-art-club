@@ -5,7 +5,7 @@ const galleryToggle = document.querySelector(".gallery-toggle");
 const gallery = document.querySelector(".gallery:not(.gallery-extra)");
 const galleryExtra = document.querySelector("#gallery-extra");
 const revealTargets = document.querySelectorAll(
-  ".section-heading, .feature, .qualification-list li, .teacher-copy, .teacher-strip, .venue-copy, .gallery-item, .contact-card, .map-wrap, .flyer-frame"
+  ".section-heading, .feature, .qualification-list li, .teacher-copy, .teacher-strip, .venue-copy, .contact-card, .map-wrap, .flyer-frame"
 );
 const scrollMotionTargets = document.querySelectorAll(".section-band, .classes, .gallery-section, .contact");
 const floatingDecorations = document.querySelectorAll(".asset-splatter, .paint-note, .hero-photo");
@@ -24,8 +24,9 @@ revealTargets.forEach((element, index) => revealElement(element, index));
 const revealVisibleNow = () => {
   revealTargets.forEach((element) => {
     const rect = element.getBoundingClientRect();
-    const triggerPoint = isMobileViewport() ? 0.72 : 0.94;
-    if (rect.top < window.innerHeight * triggerPoint && rect.bottom > window.innerHeight * 0.08) {
+    const triggerPoint = isMobileViewport() ? 1.22 : 0.94;
+    const bottomLimit = isMobileViewport() ? -window.innerHeight * 0.18 : window.innerHeight * 0.08;
+    if (rect.top < window.innerHeight * triggerPoint && rect.bottom > bottomLimit) {
       element.classList.add("is-visible");
     }
   });
@@ -35,7 +36,7 @@ revealVisibleNow();
 
 if ("IntersectionObserver" in window) {
   const revealObserverOptions = isMobileViewport()
-    ? { threshold: 0.28, rootMargin: "0px 0px -18% 0px" }
+    ? { threshold: 0.01, rootMargin: "0px 0px 220px 0px" }
     : { threshold: 0.08, rootMargin: "0px 0px 80px" };
 
   const revealObserver = new IntersectionObserver(
@@ -190,6 +191,7 @@ const setupGallerySlider = () => {
       const clone = item.cloneNode(true);
       clone.dataset.clone = "true";
       clone.setAttribute("aria-hidden", "true");
+      clone.classList.add("is-visible");
       clone.tabIndex = -1;
       const image = clone.querySelector("img");
       if (image) {
@@ -229,6 +231,7 @@ const setupGallerySlider = () => {
 
     position = wrapPosition(gallery.scrollLeft);
     gallery.scrollLeft = position;
+    gallery.querySelectorAll(".gallery-item").forEach((item) => item.classList.add("is-visible"));
   };
 
   const pause = () => {

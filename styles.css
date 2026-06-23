@@ -1245,6 +1245,15 @@ footer p {
 }
 
 @media (max-width: 620px) {
+  .classes,
+  .teacher,
+  .gallery-section,
+  .venue,
+  .contact {
+    content-visibility: visible;
+    contain-intrinsic-size: none;
+  }
+
   .site-header {
     position: static;
   }
@@ -1572,13 +1581,19 @@ footer p {
   }
 
   .gallery-item.reveal-in {
-    opacity: 0.35;
-    transform: translateY(24px) scale(0.94);
+    opacity: 1;
+    transform: none;
   }
 
   .gallery-item.reveal-in.is-visible {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: none;
+  }
+
+  .gallery-section.is-scroll-active .gallery-item:not([data-clone]) {
+    animation: none;
+    opacity: 1;
+    transform: none;
   }
 
   .is-scroll-active .section-heading h2,
