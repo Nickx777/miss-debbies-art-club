@@ -835,8 +835,11 @@ h3 {
 }
 
 .gallery {
-  display: flex;
-  align-items: stretch;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: clamp(220px, 24vw, 340px);
+  grid-template-rows: repeat(2, clamp(160px, 16vw, 230px));
+  grid-auto-rows: clamp(160px, 16vw, 230px);
   gap: clamp(14px, 1.8vw, 22px);
   overflow-x: auto;
   overflow-y: hidden;
@@ -896,8 +899,6 @@ h3 {
 .gallery-item {
   --tilt: 0deg;
   position: relative;
-  flex: 0 0 clamp(230px, 24vw, 350px);
-  height: clamp(170px, 16vw, 240px);
   overflow: hidden;
   margin: 0;
   padding: 0;
@@ -980,11 +981,11 @@ h3 {
 }
 
 .gallery-item.tall {
-  flex-basis: clamp(230px, 24vw, 350px);
+  grid-row: auto;
 }
 
 .gallery-item.wide {
-  flex-basis: clamp(300px, 34vw, 500px);
+  grid-column: auto;
 }
 
 .venue {
@@ -1396,8 +1397,11 @@ footer p {
   }
 
   .gallery {
-    display: flex;
-    align-items: stretch;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(172px, 64vw);
+    grid-template-rows: repeat(2, 138px);
+    grid-auto-rows: 138px;
     gap: 12px;
     overflow-x: auto;
     overflow-y: hidden;
@@ -1421,8 +1425,8 @@ footer p {
   .gallery-item,
   .gallery-item.tall,
   .gallery-item.wide {
-    flex: 0 0 min(74vw, 260px);
-    height: 152px;
+    grid-column: auto;
+    grid-row: auto;
     min-width: 0;
     border-width: 5px;
     scroll-snap-align: none;
