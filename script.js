@@ -9,6 +9,7 @@ const revealTargets = document.querySelectorAll(
 );
 const scrollMotionTargets = document.querySelectorAll(".section-band, .classes, .gallery-section, .contact");
 const floatingDecorations = document.querySelectorAll(".asset-splatter, .paint-note, .hero-photo");
+const isMobileViewport = () => window.matchMedia("(max-width: 620px)").matches;
 let galleryAutoScrollId;
 let galleryWasDragged = false;
 let scrollFrameId;
@@ -23,7 +24,8 @@ revealTargets.forEach((element, index) => revealElement(element, index));
 const revealVisibleNow = () => {
   revealTargets.forEach((element) => {
     const rect = element.getBoundingClientRect();
-    if (rect.top < window.innerHeight * 0.94 && rect.bottom > 0) {
+    const triggerPoint = isMobileViewport() ? 0.72 : 0.94;
+    if (rect.top < window.innerHeight * triggerPoint && rect.bottom > window.innerHeight * 0.08) {
       element.classList.add("is-visible");
     }
   });
@@ -32,6 +34,10 @@ const revealVisibleNow = () => {
 revealVisibleNow();
 
 if ("IntersectionObserver" in window) {
+  const revealObserverOptions = isMobileViewport()
+    ? { threshold: 0.28, rootMargin: "0px 0px -18% 0px" }
+    : { threshold: 0.08, rootMargin: "0px 0px 80px" };
+
   const revealObserver = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
@@ -43,7 +49,7 @@ if ("IntersectionObserver" in window) {
         revealObserver.unobserve(entry.target);
       });
     },
-    { threshold: 0.08, rootMargin: "0px 0px 80px" }
+    revealObserverOptions
   );
 
   revealTargets.forEach((element) => revealObserver.observe(element));
@@ -61,7 +67,9 @@ const updateScrollAnimations = () => {
     const centered = Math.min(1, Math.max(0, (viewportHeight - Math.abs(rect.top + rect.height / 2 - viewportHeight / 2)) / viewportHeight));
     element.style.setProperty("--scroll-progress", progress.toFixed(3));
     element.style.setProperty("--scroll-center", centered.toFixed(3));
-    element.classList.toggle("is-scroll-active", rect.top < viewportHeight * 0.86 && rect.bottom > viewportHeight * 0.12);
+    const activeTop = isMobileViewport() ? 0.68 : 0.86;
+    const activeBottom = isMobileViewport() ? 0.18 : 0.12;
+    element.classList.toggle("is-scroll-active", rect.top < viewportHeight * activeTop && rect.bottom > viewportHeight * activeBottom);
   });
 
   floatingDecorations.forEach((element, index) => {
@@ -159,23 +167,6 @@ const setupGallerySlider = () => {
   galleryToggle?.setAttribute("aria-expanded", "true");
   gallery.classList.add("is-auto-slider");
 
-  if (!gallery.dataset.cloned) {
-    const originalItems = [...gallery.querySelectorAll(".gallery-item:not([data-clone])")];
-    originalItems.forEach((item) => {
-      const clone = item.cloneNode(true);
-      clone.dataset.clone = "true";
-      clone.setAttribute("aria-hidden", "true");
-      clone.tabIndex = -1;
-      const image = clone.querySelector("img");
-      if (image) {
-        image.loading = "lazy";
-        image.decoding = "async";
-      }
-      gallery.appendChild(clone);
-    });
-    gallery.dataset.cloned = "true";
-  }
-
   if (galleryAutoScrollId) {
     return;
   }
@@ -190,13 +181,54 @@ const setupGallerySlider = () => {
   let dragStartX = 0;
   let dragStartScroll = 0;
   let dragDistance = 0;
+  let scrollSyncFrame;
+
+  const getOriginalItems = () => [...gallery.querySelectorAll(".gallery-item:not([data-clone])")];
+
+  const appendCloneSet = (items) => {
+    items.forEach((item) => {
+      const clone = item.cloneNode(true);
+      clone.dataset.clone = "true";
+      clone.setAttribute("aria-hidden", "true");
+      clone.tabIndex = -1;
+      const image = clone.querySelector("img");
+      if (image) {
+        image.loading = "lazy";
+        image.decoding = "async";
+      }
+      gallery.appendChild(clone);
+    });
+  };
+
+  const wrapPosition = (value) => {
+    if (!loopPoint) {
+      return value;
+    }
+
+    return ((value % loopPoint) + loopPoint) % loopPoint;
+  };
 
   const updateLoopPoint = () => {
-    const originalItems = [...gallery.querySelectorAll(".gallery-item:not([data-clone])")];
+    gallery.querySelectorAll(".gallery-item[data-clone]").forEach((clone) => clone.remove());
+
+    const originalItems = getOriginalItems();
     const first = originalItems[0];
     const last = originalItems.at(-1);
     const gap = parseFloat(getComputedStyle(gallery).columnGap) || 0;
     loopPoint = first && last ? last.offsetLeft + last.offsetWidth - first.offsetLeft + gap : gallery.scrollWidth / 2;
+
+    if (!originalItems.length) {
+      return;
+    }
+
+    let cloneSets = 0;
+    do {
+      appendCloneSet(originalItems);
+      cloneSets += 1;
+    } while (cloneSets < 4 && gallery.scrollWidth < loopPoint + gallery.clientWidth * 2);
+
+    position = wrapPosition(gallery.scrollLeft);
+    gallery.scrollLeft = position;
   };
 
   const pause = () => {
@@ -208,10 +240,13 @@ const setupGallerySlider = () => {
   };
 
   const normalizePosition = () => {
-    if (loopPoint && gallery.scrollLeft >= loopPoint) {
-      gallery.scrollLeft -= loopPoint;
+    if (!loopPoint) {
+      position = gallery.scrollLeft;
+      return;
     }
-    position = gallery.scrollLeft;
+
+    position = wrapPosition(gallery.scrollLeft);
+    gallery.scrollLeft = position;
   };
 
   gallery.addEventListener("pointerdown", (event) => {
@@ -252,15 +287,41 @@ const setupGallerySlider = () => {
 
   gallery.addEventListener("pointerup", finishDrag);
   gallery.addEventListener("pointercancel", finishDrag);
-  gallery.addEventListener("wheel", pause, { passive: true });
+  gallery.addEventListener(
+    "scroll",
+    () => {
+      if (scrollSyncFrame) {
+        return;
+      }
+
+      scrollSyncFrame = window.requestAnimationFrame(() => {
+        scrollSyncFrame = undefined;
+        if (paused || isDragging) {
+          normalizePosition();
+          return;
+        }
+
+        position = gallery.scrollLeft;
+      });
+    },
+    { passive: true }
+  );
+  gallery.addEventListener("wheel", () => {
+    pause();
+    window.requestAnimationFrame(normalizePosition);
+  }, { passive: true });
   gallery.addEventListener("focusin", pause);
   window.addEventListener("resize", updateLoopPoint, { passive: true });
+  window.addEventListener("load", updateLoopPoint, { once: true });
   updateLoopPoint();
 
   if ("IntersectionObserver" in window) {
     const galleryObserver = new IntersectionObserver(
       ([entry]) => {
         galleryIsVisible = entry.isIntersecting;
+        if (galleryIsVisible) {
+          updateLoopPoint();
+        }
         lastFrame = performance.now();
         position = gallery.scrollLeft;
       },
@@ -280,10 +341,7 @@ const setupGallerySlider = () => {
     lastFrame = now;
     position += delta * 0.05;
 
-    if (loopPoint && position >= loopPoint) {
-      position -= loopPoint;
-    }
-
+    position = wrapPosition(position);
     gallery.scrollLeft = position;
   };
 

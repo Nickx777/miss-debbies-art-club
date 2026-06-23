@@ -23,11 +23,13 @@
 }
 
 html {
+  overflow-x: hidden;
   scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
+  overflow-x: hidden;
   color: var(--ink);
   font-family: "Trebuchet MS", "Segoe UI", Arial, sans-serif;
   background:
@@ -524,11 +526,19 @@ h3 {
   margin-inline: auto;
 }
 
-.classes::before,
-.classes::after {
-  content: none;
+
+.classes,
+.teacher,
+.gallery-section,
+.venue,
+.contact {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 780px;
 }
 
+.gallery-section {
+  contain-intrinsic-size: auto 560px;
+}
 .section-splash {
   opacity: 0.24;
   z-index: 0;
@@ -825,12 +835,8 @@ h3 {
 }
 
 .gallery {
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: clamp(220px, 24vw, 340px);
-  grid-template-columns: none;
-  grid-template-rows: repeat(2, clamp(160px, 16vw, 230px));
-  grid-auto-rows: clamp(160px, 16vw, 230px);
+  display: flex;
+  align-items: stretch;
   gap: clamp(14px, 1.8vw, 22px);
   overflow-x: auto;
   overflow-y: hidden;
@@ -890,6 +896,8 @@ h3 {
 .gallery-item {
   --tilt: 0deg;
   position: relative;
+  flex: 0 0 clamp(230px, 24vw, 350px);
+  height: clamp(170px, 16vw, 240px);
   overflow: hidden;
   margin: 0;
   padding: 0;
@@ -972,11 +980,11 @@ h3 {
 }
 
 .gallery-item.tall {
-  grid-row: auto;
+  flex-basis: clamp(230px, 24vw, 350px);
 }
 
 .gallery-item.wide {
-  grid-column: auto;
+  flex-basis: clamp(300px, 34vw, 500px);
 }
 
 .venue {
@@ -1230,11 +1238,6 @@ footer p {
     margin-top: 0;
   }
 
-  .gallery {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    grid-auto-rows: 210px;
-  }
-
   .map-wrap {
     min-height: 360px;
   }
@@ -1393,12 +1396,8 @@ footer p {
   }
 
   .gallery {
-    display: grid;
-    grid-auto-flow: column;
-    grid-auto-columns: minmax(172px, 64vw);
-    grid-template-columns: none;
-    grid-template-rows: repeat(2, 138px);
-    grid-auto-rows: 138px;
+    display: flex;
+    align-items: stretch;
     gap: 12px;
     overflow-x: auto;
     overflow-y: hidden;
@@ -1422,8 +1421,8 @@ footer p {
   .gallery-item,
   .gallery-item.tall,
   .gallery-item.wide {
-    grid-column: auto;
-    grid-row: auto;
+    flex: 0 0 min(74vw, 260px);
+    height: 152px;
     min-width: 0;
     border-width: 5px;
     scroll-snap-align: none;
@@ -1642,3 +1641,4 @@ footer p {
     translate: none;
   }
 }
+
