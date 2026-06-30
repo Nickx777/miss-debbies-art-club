@@ -5,9 +5,9 @@ const galleryToggle = document.querySelector(".gallery-toggle");
 const gallery = document.querySelector(".gallery:not(.gallery-extra)");
 const galleryExtra = document.querySelector("#gallery-extra");
 const revealTargets = document.querySelectorAll(
-  ".section-heading, .feature, .qualification-list li, .teacher-copy, .teacher-strip, .venue-copy, .contact-card, .map-wrap, .flyer-frame"
+  ".section-heading, .feature, .qualification-list li, .teacher-copy, .teacher-strip, .review-card, .venue-copy, .contact-card, .map-wrap, .flyer-frame"
 );
-const scrollMotionTargets = document.querySelectorAll(".section-band, .classes, .gallery-section, .contact");
+const scrollMotionTargets = document.querySelectorAll(".section-band, .classes, .reviews, .gallery-section, .contact");
 const floatingDecorations = document.querySelectorAll(".asset-splatter, .paint-note, .hero-photo");
 const isMobileViewport = () => window.matchMedia("(max-width: 620px)").matches;
 let galleryAutoScrollId;

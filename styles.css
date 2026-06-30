@@ -508,6 +508,7 @@ h3 {
 }
 
 .classes,
+.reviews,
 .gallery-section,
 .contact {
   position: relative;
@@ -529,6 +530,7 @@ h3 {
 
 .classes,
 .teacher,
+.reviews,
 .gallery-section,
 .venue,
 .contact {
@@ -538,6 +540,100 @@ h3 {
 
 .gallery-section {
   contain-intrinsic-size: auto 560px;
+}
+
+.reviews {
+  width: 100%;
+  padding-inline: max(18px, calc((100vw - var(--max)) / 2));
+  background:
+    linear-gradient(112deg, #fff8e9 0%, #f2fbff 48%, #fff1c5 100%);
+  border-block: 3px solid rgba(37, 19, 61, 0.08);
+}
+
+.reviews .section-heading {
+  max-width: 760px;
+}
+
+.reviews-pink {
+  width: clamp(170px, 24vw, 330px);
+  right: max(18px, calc((100vw - var(--max)) / 2));
+  top: 36px;
+  opacity: 0.2;
+  transform: rotate(10deg);
+}
+
+.review-grid {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(16px, 2vw, 24px);
+}
+
+.review-card {
+  --review-tilt: -0.7deg;
+  position: relative;
+  min-height: 255px;
+  padding: 24px 22px 22px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.97), rgba(255, 252, 242, 0.98)),
+    radial-gradient(circle at 92% 12%, rgba(255, 210, 30, 0.22), transparent 6rem);
+  border: 3px solid rgba(37, 19, 61, 0.86);
+  border-radius: var(--radius);
+  box-shadow:
+    9px 10px 0 rgba(240, 23, 114, 0.13),
+    0 20px 42px rgba(52, 29, 84, 0.1);
+  transform: rotate(var(--review-tilt));
+  transition: transform 220ms ease, box-shadow 220ms ease, filter 220ms ease;
+}
+
+.review-card:nth-child(even) {
+  --review-tilt: 0.75deg;
+  box-shadow:
+    9px 10px 0 rgba(8, 168, 189, 0.14),
+    0 20px 42px rgba(52, 29, 84, 0.1);
+}
+
+.review-card:nth-child(3) {
+  --review-tilt: -0.45deg;
+}
+
+.review-card:hover,
+.review-card:focus-within {
+  z-index: 3;
+  transform: translateY(-8px) rotate(0deg);
+  box-shadow:
+    12px 14px 0 rgba(255, 210, 30, 0.2),
+    0 28px 58px rgba(52, 29, 84, 0.17);
+  filter: saturate(1.06);
+}
+
+.review-rating {
+  display: inline-grid;
+  min-width: 54px;
+  min-height: 38px;
+  place-items: center;
+  margin-bottom: 16px;
+  background: var(--yellow);
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  color: var(--ink);
+  font-weight: 900;
+  box-shadow: 5px 5px 0 rgba(37, 19, 61, 0.1);
+}
+
+.review-card p {
+  margin-bottom: 18px;
+  color: #4e3a5c;
+  font-size: 1.02rem;
+  line-height: 1.48;
+}
+
+.review-card span {
+  display: block;
+  color: var(--deep-blue);
+  font-size: 0.92rem;
+  font-weight: 900;
 }
 .section-splash {
   opacity: 0.24;
@@ -1126,6 +1222,7 @@ footer p {
 
 .section-heading.reveal-in,
 .feature.reveal-in,
+.review-card.reveal-in,
 .qualification-list li.reveal-in,
 .contact-card.reveal-in,
 .map-wrap.reveal-in,
@@ -1144,6 +1241,19 @@ footer p {
 .feature.reveal-in.is-visible:hover,
 .feature.reveal-in.is-visible:focus-within {
   transform: translateY(-9px) rotate(0deg) scale(1.018);
+}
+
+.review-card.reveal-in {
+  transform: translateY(24px) rotate(var(--review-tilt, -0.7deg));
+}
+
+.review-card.reveal-in.is-visible {
+  transform: rotate(var(--review-tilt, -0.7deg));
+}
+
+.review-card.reveal-in.is-visible:hover,
+.review-card.reveal-in.is-visible:focus-within {
+  transform: translateY(-8px) rotate(0deg);
 }
 
 .qualification-list li.reveal-in {
@@ -1235,6 +1345,10 @@ footer p {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .review-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .teacher-strip {
     margin-top: 0;
   }
@@ -1247,6 +1361,7 @@ footer p {
 @media (max-width: 620px) {
   .classes,
   .teacher,
+  .reviews,
   .gallery-section,
   .venue,
   .contact {
@@ -1382,6 +1497,21 @@ footer p {
     grid-template-columns: 1fr;
   }
 
+  .review-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .reviews-pink {
+    right: -72px;
+    top: 18px;
+    opacity: 0.11;
+  }
+
+  .review-card {
+    min-height: 0;
+    padding: 22px 20px;
+  }
+
   .hero-actions,
   .contact-actions {
     flex-direction: column;
@@ -1466,6 +1596,7 @@ footer p {
 
 .is-scroll-active .section-heading h2,
 .is-scroll-active .teacher-copy h2,
+.reviews.is-scroll-active .section-heading h2,
 .is-scroll-active .venue-copy h2,
 .is-scroll-active .contact-card h2 {
   animation: brushTitleIn 760ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
@@ -1473,6 +1604,7 @@ footer p {
 
 .section-band,
 .classes,
+.reviews,
 .gallery-section,
 .contact {
   --scroll-center: 0;
@@ -1480,6 +1612,7 @@ footer p {
 
 .classes.is-scroll-active .feature,
 .teacher.is-scroll-active .qualification-list li,
+.reviews.is-scroll-active .review-card,
 .venue.is-scroll-active .map-wrap,
 .contact.is-scroll-active .contact-card {
   filter: saturate(calc(1 + var(--scroll-center) * 0.08));
@@ -1598,6 +1731,7 @@ footer p {
 
   .is-scroll-active .section-heading h2,
   .is-scroll-active .teacher-copy h2,
+  .reviews.is-scroll-active .section-heading h2,
   .is-scroll-active .venue-copy h2,
   .is-scroll-active .contact-card h2 {
     animation: mobileBrushTitleIn 820ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
@@ -1605,6 +1739,7 @@ footer p {
 
   .classes.is-scroll-active .feature,
   .teacher.is-scroll-active .qualification-list li,
+  .reviews.is-scroll-active .review-card,
   .venue.is-scroll-active .venue-copy,
   .contact.is-scroll-active .contact-card {
     animation: mobileCardPop 760ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
