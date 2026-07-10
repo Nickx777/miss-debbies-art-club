@@ -1186,7 +1186,8 @@ footer p {
   backdrop-filter: blur(7px);
 }
 
-.lightbox img {
+.lightbox img,
+.lightbox video {
   width: auto;
   max-width: 100%;
   max-height: calc(100vh - 100px);
@@ -1196,6 +1197,24 @@ footer p {
   background: #fff;
   box-shadow: var(--shadow);
   animation: lightboxPop 200ms ease both;
+}
+
+.gallery-video::after {
+  content: "Play video";
+  position: absolute;
+  z-index: 2;
+  right: 14px;
+  bottom: 14px;
+  padding: 8px 11px;
+  border: 2px solid rgba(37, 19, 61, 0.92);
+  border-radius: 5px;
+  background: #f01772;
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  box-shadow: 3px 3px 0 #ffd21e;
+  pointer-events: none;
 }
 
 .lightbox-close {

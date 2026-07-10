@@ -1,5 +1,6 @@
 const lightbox = document.querySelector(".lightbox");
 const lightboxImage = lightbox?.querySelector("img");
+const lightboxVideo = lightbox?.querySelector("video");
 const closeButton = lightbox?.querySelector(".lightbox-close");
 const galleryToggle = document.querySelector(".gallery-toggle");
 const gallery = document.querySelector(".gallery:not(.gallery-extra)");
@@ -98,19 +99,33 @@ document.addEventListener("click", (event) => {
     return;
   }
 
-  if (button.classList.contains("gallery-item") && galleryWasDragged) {
-    event.preventDefault();
-    galleryWasDragged = false;
-    return;
-  }
+  galleryWasDragged = false;
 
   const image = button.querySelector("img");
+  const videoSource = button.dataset.video;
   const fullImage = button.dataset.full || image?.src;
 
-  if (!lightbox || !lightboxImage || !fullImage) {
+  if (!lightbox || !lightboxImage || (!fullImage && !videoSource)) {
     return;
   }
 
+  if (videoSource && lightboxVideo) {
+    lightboxImage.hidden = true;
+    lightboxVideo.hidden = false;
+    lightboxVideo.src = videoSource;
+    lightboxVideo.poster = button.dataset.poster || "";
+    lightboxVideo.load();
+    lightbox.showModal();
+    return;
+  }
+
+  lightboxVideo?.pause();
+  lightboxVideo?.removeAttribute("src");
+  lightboxVideo?.load();
+  if (lightboxVideo) {
+    lightboxVideo.hidden = true;
+  }
+  lightboxImage.hidden = false;
   lightboxImage.src = fullImage;
   lightboxImage.alt = image?.alt || "Artwork gallery image";
   lightbox.showModal();
@@ -179,6 +194,7 @@ const setupGallerySlider = () => {
   let loopPoint = 0;
   let galleryIsVisible = true;
   let isDragging = false;
+  let isHovered = false;
   let dragStartX = 0;
   let dragStartScroll = 0;
   let dragDistance = 0;
@@ -253,14 +269,12 @@ const setupGallerySlider = () => {
   };
 
   gallery.addEventListener("pointerdown", (event) => {
-    event.preventDefault();
     pause();
     isDragging = true;
     dragStartX = event.clientX;
     dragStartScroll = gallery.scrollLeft;
     dragDistance = 0;
     gallery.classList.add("is-dragging");
-    gallery.setPointerCapture?.(event.pointerId);
   });
 
   gallery.addEventListener("pointermove", (event) => {
@@ -282,7 +296,6 @@ const setupGallerySlider = () => {
 
     isDragging = false;
     gallery.classList.remove("is-dragging");
-    gallery.releasePointerCapture?.(event.pointerId);
     galleryWasDragged = dragDistance > 8;
     normalizePosition();
     pause();
@@ -290,6 +303,8 @@ const setupGallerySlider = () => {
 
   gallery.addEventListener("pointerup", finishDrag);
   gallery.addEventListener("pointercancel", finishDrag);
+  window.addEventListener("pointerup", finishDrag);
+  window.addEventListener("pointercancel", finishDrag);
   gallery.addEventListener(
     "scroll",
     () => {
@@ -314,6 +329,13 @@ const setupGallerySlider = () => {
     window.requestAnimationFrame(normalizePosition);
   }, { passive: true });
   gallery.addEventListener("focusin", pause);
+  gallery.addEventListener("mouseenter", () => {
+    isHovered = true;
+  });
+  gallery.addEventListener("mouseleave", () => {
+    isHovered = false;
+    lastFrame = performance.now();
+  });
   window.addEventListener("resize", updateLoopPoint, { passive: true });
   window.addEventListener("load", updateLoopPoint, { once: true });
   updateLoopPoint();
@@ -335,7 +357,7 @@ const setupGallerySlider = () => {
 
   const tick = (now) => {
     galleryAutoScrollId = window.requestAnimationFrame(tick);
-    if (paused || isDragging || !galleryIsVisible || document.hidden || gallery.scrollWidth <= gallery.clientWidth) {
+    if (paused || isDragging || isHovered || !galleryIsVisible || document.hidden || gallery.scrollWidth <= gallery.clientWidth) {
       lastFrame = now;
       return;
     }
@@ -354,12 +376,19 @@ const setupGallerySlider = () => {
 setupGallerySlider();
 
 closeButton?.addEventListener("click", () => {
+  lightboxVideo?.pause();
   lightbox?.close();
 });
 
 lightbox?.addEventListener("click", (event) => {
   if (event.target === lightbox) {
+    lightboxVideo?.pause();
     lightbox.close();
   }
+});
+
+lightbox?.addEventListener("close", () => {
+  lightboxVideo?.pause();
+  lightboxVideo?.removeAttribute("src");
 });
 
